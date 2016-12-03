@@ -78,17 +78,32 @@
 
 \usepackage{graphicx} % Allows including images
 \usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{verbatim}
+
+\usepackage{color}
+
+\newcommand{\vimmode}[1]{\texttt{#1}}
+
+\newcommand{\viminsert}[1]{\texttt{\textcolor{blue}{#1}}}
+\newcommand{\vimnormal}[1]{\texttt{\textcolor{orange}{#1}}}
+\newcommand{\vimcommand}[1]{\texttt{\textcolor{brown}{#1}}}
+\newcommand{\vimvisual}[1]{\texttt{\textcolor{purple}{#1}}}
+\newcommand{\vimrc}[1]{\texttt{\textcolor{brown}{#1}}}
+
+\newcommand{\vimhelp}[1]{\vimcommand{:h #1}}
+
+\newcommand{\vimkey}[1]{\textless{}#1\textgreater{}}
 
 %----------------------------------------------------------------------------------------
 %   TITLE PAGE
 %----------------------------------------------------------------------------------------
 
-\title[Vim Intro]{Comprehensive introduction to Vim} % The short title appears at the bottom of every slide, the full title is only on the title page
+\title[Vim Intro]{Comprehensive presentation of Vim features} % The short title appears at the bottom of every slide, the full title is only on the title page
 
 \author{Aleksander Gajewski} % Your name
 \institute[None] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
 {
-\textit{aleksander@gajewski.fr} % Your email address
+\textit{adiog@brainfuck.pl} % Your email address
 }
 \date{\today} % Date, can be changed to a custom date
 
@@ -99,483 +114,436 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Overview}
-  Vim is a highly customizable, modal editor. It is extensible with built-in vimscript language, python-support and huge collection of plugins.\\
-  This presentation is intended to give a general overview of Vim and be a first reference for a novice user to start using its feature efficiently.\\
-  For futher information please:
-  \begin{enumerate} 
-    \item - use vim internal help (:h *topic*)
-    \item - run vimtutor
-    \item - visit vimcasts.org
-    \item - visit learnvimscriptinahardway.com
-  \end{enumerate}
+    \frametitle{Overview}
+    \viminsert{test}
+    Vim is a highly customizable, modal editor. It is extensible with built-in vimscript language, python-support and huge collection of plugins.\\
+    This presentation is intended to give a general overview of Vim and be a first reference for a novice user to start using its feature efficiently.\\
+    For futher information please
+    \begin{enumerate} 
+        \item use vim internal help (:h \textrm{*topic*})
+        \item run vimtutor
+        \item visit vimcasts.org
+        \item visit learnvimscriptinahardway.com
+        \item visit stackoverflow.com/tag/vim
+    \end{enumerate}
 \end{frame}
 
 \begin{frame}[fragile]
-\frametitle{Vi Improved}
- \includegraphics[width=\textwidth]{vim_screen.png}
+    \frametitle{Vi Improved}
+    \includegraphics[width=\textwidth]{vim_screen.png}
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{Modes overview *vim-modes*}
-  \includegraphics[width=\textwidth]{vim_modes.png}
+    \frametitle{Modes overview \vimhelp{vim-modes}}
+    \includegraphics[width=\textwidth]{vim_modes.png}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Presentation convention}
+    To avoid confusion the following colors will be used to indicate the initial modes of key sequence:
+    \begin{itemize}
+        \item \vimnormal{\vimmode{normal}} $\rightarrow$ \viminsert{\vimmode{insert}} - \vimnormal{i}, \vimnormal{I}, \vimnormal{a}, \vimnormal{A}, \vimnormal{o}, \vimnormal{O}, \vimnormal{C}, \vimnormal{S}
+        \item \vimvisual{\vimmode{visual}} $\rightarrow$ \viminsert{\vimmode{insert}} - \vimvisual{I}, \vimvisual{A}, \vimvisual{c}
+        \item \vimvisual{\vimmode{visual}} $\rightarrow$ \vimnormal{\vimmode{normal}} - \vimvisual{\vimkey{ESC}}
+        \item \viminsert{\vimmode{insert}} $\rightarrow$ \vimnormal{\vimmode{normal}} - \viminsert{\vimkey{ESC}}
+        \item \vimnormal{\vimmode{normal}} $\rightarrow$ \vimvisual{\vimmode{visual}} - \vimnormal{v}, \vimnormal{V}, \vimnormal{\vimkey{C-v}}
+        \item \vimnormal{\vimmode{normal}} $\rightarrow$ \vimcommand{command} - \vimnormal{:}
+        \item \vimvisual{\vimmode{visual}} $\rightarrow$ \vimcommand{command} - \vimnormal{:} (\vimcommand{:'\textless{},'\textgreater{}} indicates visual range) 
+        \item \vimcommand{command} $\rightarrow$ \vimnormal{\vimmode{normal}} - \vimcommand{\vimkey{ESC}}
+    \end{itemize}
+    By default command instructions will be marked regardless initial mode (i.e. with leading colon - e.g. \vimcommand{:h vim-modes}). Also trailing \texttt{Enter} (\vimcommand{\vimkey{CR}}) will be mostly omitted.
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Used convention in examples}
+    {\footnotesize
+    \begin{itemize}
+        \item \vimcommand{[range]} - stands for comma-separated range of lines, e.g. \vimcommand{15,25}, or visual range \vimcommand{:'\textless{},'\textgreater{}}, or whole file \vimcommand{\%}
+        \item \vimcommand{[optional]} - may stand for an optional argument
+        \item \vimvisual{\{Visual\}} - may highlight that command can be used on a given selection in visual mode
+        \item \vimnormal{"a}, \vimnormal{"A}, \vimnormal{"0} - use register \texttt{a}, \texttt{A} or \texttt{0} for next delete, yank or put operation\\
+          \textit{remark \#1}: register is identified by a single character: a lowercase letter, an uppercase letter or a digit\\
+          \textit{remark \#2}: use uppercase character to append with delete and yank
+          \textit{remark \#3}: use record macro to clear register (i.e. \vimnormal{qaq})
+        \item \vimnormal{\vimkey{CR}}, \vimnormal{\vimkey{Up}}, \vimnormal{\vimkey{BS}}, \vimnormal{\vimkey{C-c}}, \vimnormal{\vimkey{C-v}}, \vimnormal{\vimkey{S-Left}} - stands for key sequence \texttt{Enter}, \texttt{Up}, \texttt{Backspace}, \texttt{Ctrl+C}, \texttt{Ctrl+V} and \texttt{Shift+Left} respectively
+    \end{itemize}
+    }
 \end{frame}
 
 \begin{frame}
-  \frametitle{Load/Save/Quit}
-  Basic commands:
-  \begin{enumerate}
-    \item :e filename - edit/reload file
-    \item :w - save file
-    \item :q (:q!) - quit (without saving)
-    \item :wq - save and quit
-    \item :sav filename - 'save as' file (and open in current window)
-  \end{enumerate}
-
-  Useful ones:
-  \begin{enumerate}
-    \item :[range]w filename - write range to file
-    \item :r filename - insert file below the cursor
-  \end{enumerate}
+    \frametitle{Load/Save/Quit}
+    Basic commands:
+    \begin{enumerate}
+        \item \vimcommand{:e filename} - edit/reload file
+        \item \vimcommand{:w} (\vimcommand{:w!}) - save file (force overwrite)
+        \item \vimcommand{:q} (\vimcommand{:q!}) - quit (without saving)
+        \item \vimcommand{:wq} - save and quit
+        \item \vimcommand{:sav filename} - 'save as' file (and open in current window)
+        \item \vimcommand{:\%!sudo tee \%} - save as root
+    \end{enumerate}
+    Useful ones:
+    \begin{enumerate}
+        \item \vimcommand{:[range]w filename} - write range to file
+        \item \vimcommand{:r filename} - insert file below the cursor
+    \end{enumerate}
+    Save and quit directly from \vimnormal{normal}: \vimnormal{ZZ}
 \end{frame}
 
 \begin{frame}
-  \frametitle{Moving around}
-  There is a huge boost while not using arrow keys to moving.
-  \begin{enumerate}
-    \item h (left), j (down), k (up), l (right) \\
-    \item gg (begin of file), G (end of file) \\
-    \item :<linenumber> - go to line
-  \end{enumerate}
-  All motion will be precisely described on further slides.
+    \frametitle{Basics about moving around}
+    There is a huge boost while not using arrow keys to moving.
+    \begin{enumerate}
+        \item \vimnormal{h} (left), \vimnormal{j} (down), \vimnormal{k} (up), \vimnormal{l} (right) \\
+        \item \vimnormal{gh} (left), \vimnormal{gj} (down), \vimnormal{gk} (up), \vimnormal{gl} (right) (when wrapped)\\
+        \item \vimnormal{gg} (begin of file), \vimnormal{G} (end of file) \\
+        \item \vimcommand{:[linenumber]} - go to line
+    \end{enumerate}
+    All motion will be precisely described on further slides.
 \end{frame}
 
 \begin{frame}
-  \frametitle{Buffers / Windows / Tabs}
-  Summary:
-  \begin{enumerate}
-    \item A buffer is the in-memory text of a file.
-    \item A window is a viewport on a buffer.
-    \item A tab page is a collection of windows.
-  \end{enumerate}
+    \frametitle{Boosted typing (completition)}
+    In \viminsert{insert} mode:
+    \begin{enumerate}
+        \item \viminsert{\vimkey{C-p}}, \viminsert{\vimkey{C-n}} - previous, next autocomplete suggestion
+        \item \viminsert{\vimkey{C-x}\vimkey{C-f}} - autocomplete with filename 
+        \item \viminsert{\vimkey{C-e}}, \viminsert{\vimkey{C-y}} - insert char below/above
+    \end{enumerate}
+    In \vimnormal{normal} mode:
+    \begin{enumerate}
+        \item \vimnormal{\vimkey{C-a}}, \vimnormal{\vimkey{C-x}} - increment, decrement number 
+    \end{enumerate}
 \end{frame}
 
 \begin{frame}
-  \frametitle{Buffers / Windows / Tabs: topics}
-  \begin{itemize} 
-    \item *opening-window* (new, split, vsplit) \\
-    \item *window-move-cursor* \\
-    \item
-      \begin{enumerate}
-        \item C-w jhlk
-        \item C-w C-w
-      \end{enumerate}
-    \item *window-moving* \\
-    \item *window-resize* \\
-    \item *buffer-list* \\
-    \item *list-repeat* (:bufdo, :windo, :tabdo)
+    \frametitle{Buffers / Windows / Tabs}
+    Summary:
+    \begin{enumerate}
+        \item A \textbf{buffer} is the in-memory text of a file.
+        \item A \textbf{window} is a viewport on a buffer.
+        \item A \textbf{tab page} is a collection of windows.
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Buffers / Windows / Tabs: reference topics}
+    \begin{itemize} 
+        \item \vimhelp{opening-window} (\vimhelp{new}, \vimhelp{split}, \vimhelp{vsplit}) \\
+        \item \vimhelp{window-move-cursor} \\
+        \item
+        \begin{itemize}
+            \item \vimnormal{\vimkey{C-w}j} (move left), \vimnormal{\vimkey{C-w}h} (move down), \vimnormal{\vimkey{C-w}l} (move up), \vimnormal{C-w k} (move right)
+            \item \vimnormal{\vimkey{C-w}\vimkey{C-w}} (move next)
+        \end{itemize}
+        \item \vimhelp{window-moving} 
+        \item \vimhelp{window-resize}
+        \item \vimhelp{buffer-list} 
+        \item \vimhelp{list-repeat} (\vimhelp{bufdo}, \vimhelp{windo}, \vimhelp{tabdo})
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Copying and Moving Text}
+    \begin{enumerate}
+        \item \textbf{"\{a-zA-Z0-9\}} - use register \{a-zA-Z0-9\} for next delete, yank or put (use uppercase character to append with delete and yank)
+        \item \textbf{:reg[isters]} - display the contents of all registers
+        \item \textbf{["x]y\{motion\}} - yank \{motion\} text [into register x]
+        \item \textbf{["x]yy} - yank [count] lines [into register x]
+        \item \textbf{["x]Y} - yank [count] lines [into register x] (synonym for yy)
+        \item \textbf{\{Visual\}["x]y} - yank the highlighted text [into register x]
+        \item \textbf{\{Visual\}["x]Y} - yank the highlighted lines [into register x]
+        \item \textbf{:[range]y[ank] [x]} - yank [range] lines [into register x].
+        \item \textbf{["x]p}, ["x]P - put the text [from register x] after (for P before)
+        \item \textbf{["x]gp}, ["x]gP - just like "p" ("P"), but leave the cursor just after the new text.
+        \item \textbf{:[line]pu[t] [x]}, :[line]pu[t]! [x] - put the text [from register x] after (before) [line] (default current line).
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Undo/Redo/Repeat features}
+    \begin{enumerate}
+        \item \vimnormal{[count]u}   - undo [count] changes
+        \item \vimcommand{:u[ndo]}    - undo one change
+        \item \vimnormal{[count]C-R} - redo [count] changes which were undone
+        \item \vimcommand{:red[o]}    - redo one change which was undone
+        \item \vimnormal{U}          - undo all latest changes on one line.
+    \end{enumerate}
+    \vimnormal{.}          - repeat last change, with count replaced with [count].
+\end{frame}
+
+\begin{frame}
+    \frametitle{Operators and motions}
+    In normal mode (\vimnormal{\{operator\}[count]\{motion\}}):
+    \begin{enumerate}
+        \item - enter an operation (e.g. delete, change, yank, cut)
+        \item - provide optional [count] argument
+        \item - use a motion (to indicate the text region)
+    \end{enumerate}
+    Or in visual mode (\vimvisual{[count]\{motion\}\{operator\}}):
+    \begin{enumerate}
+        \item - provide optional [count] argument
+        \item - enter a motion
+        \item - use an operation
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}
+    \frametitle{1. Operators}
+    \begin{enumerate}
+        \item \texttt{c}  - change
+        \item \texttt{d}  - delete
+        \item \texttt{y}  - yank into register (does not change the text)
+        \item \texttt{x}  - cut into register
+        \item \texttt{gu} - make lowercase
+        \item \texttt{gU} - make uppercase
+        \item \texttt{!}  - filter through an external program
+        \item \texttt{=}  - filter through equalprg or C-indenting if empty
+        \item \texttt{gq} - text formatting
+        \item \texttt{g?} - ROT13 encoding aka boss mode
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}
+    \frametitle{2. Left-right motions \vimhelp{left-right-motions}}
+    \begin{enumerate}
+      \item \texttt{h}, \texttt{\vimkey{Left}}, \texttt{\vimkey{C-h}}, \texttt{\vimkey{BS}} - [count] characters to the left
+        \item \texttt{l}, \texttt{\vimkey{Right}}, \texttt{\textless{}Space\textgreater{}}           - [count] characters to the right
+        \item \texttt{0}, \texttt{\textless{}Home\textgreater{}}                              - to the first character of the line
+        \item \texttt{f\{char\}}                                       - to [count]th occurrence of \{char\} to the right. The cursor is placed on \{char\} inclusive
+        \item \texttt{F\{char\}}                                       - to the [count]'th occurrence of \{char\} to the left. The cursor is placed on \{char\} exclusive.
+        \item \texttt{t\{char\}}                                       - till before [count]'th occurrence of \{char\} to the right.  The cursor is placed on the character left of \{char\} |inclusive|
+        \item \texttt{T\{char\}}                                       - till after [count]'th occurrence of \{char\} to the left.  The cursor is placed on the character right of \{char\} exclusive.
+        \item \texttt{;}                                               - repeat latest f, t, F or T [count] times
+        \item \texttt{,}                                               - repeat latest f, t, F or T in opposite direction [count] times
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}
+    \frametitle{3. Up-down motions \vimhelp{up-down-motions}}
+    \begin{itemize}
+        \item \texttt{k}, \texttt{\textless{}Up\textgreater{}}, \texttt{C-p}                  - lines upward |linewise|
+        \item \texttt{j}, \texttt{\textless{}Down\textgreater{}}, \texttt{C-j}, \texttt{C-n}  - lines downward |linewise|
+        \item \texttt{gk}, \texttt{g\textless{}Up\textgreater{}}                              - display lines upward.  not linewise
+        \item \texttt{gj}, \texttt{g\textless{}Down\textgreater{}}                            - display lines downward.  |exclusive| motion.
+        \item \texttt{G}                                               - goto line, default first line.
+        \item \texttt{\textless{}C-End\textgreater{}}                                         - goto line [count], default last line.
+        \item \texttt{\textless{}C-Home\textgreater{}}, \texttt{gg}                           - goto line [count], default first line, on the first non-blank character |linewise|i
+        \item \texttt{:[range]}                                        - set the cursor on the last line number in [range].
+        \item \texttt{N\%}                                             - go to \{count\} percentage in the file
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{4. Word motions \vimhelp{word-motions}}
+    \begin{itemize}
+        \item \texttt{w}                            - [count] words forward.  |exclusive| motion.
+        \item \texttt{W}, \texttt{\vimkey{C-Right}} - [count] WORDS forward.  |exclusive| motion.
+        \item \texttt{e}                            - Forward to the end of word [count] |inclusive|.
+        \item \texttt{E}                            - Forward to the end of WORD [count] |inclusive|.
+        \item \texttt{\vimkey{S-Left}}, \texttt{b}  - [count] words backward.  |exclusive| motion.
+        \item \texttt{\vimkey{C-Left}}, \texttt{B}  - [count] WORDS backward.  |exclusive| motion.
+        \item \texttt{ge}                           - Backward to the end of word [count] |inclusive|.
+        \item \texttt{gE}                           - Backward to the end of WORD [count] |inclusive|.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{5. Text object motions \vimhelp{object-motions}}
+    \begin{itemize}
+        \item \texttt{(}  - [count] sentences backward.  |exclusive| motion.
+        \item \texttt{)}  - [count] sentences forward.  |exclusive| motion.
+        \item \texttt{\{} - [count] paragraphs backward.  |exclusive| motion.
+        \item \texttt{\}} - [count] paragraphs forward.  |exclusive| motion.
+        \item \texttt{]]} - [count] sections forward or to the next '\{' in the   first column.  When used after an operator, then also stops below a '\}' in the first column.  |exclusive| Note that |exclusive-linewise| often applies.
+        \item \texttt{][} - [count] sections forward or to the next '\}' in the first column.  |exclusive| Note that |exclusive-linewise| often applies. 
+        \item \texttt{[[} - [count] sections backward or to the previous '\{' in       the first column.  |exclusive|       Note that |exclusive-linewise| often applies.
+        \item \texttt{[]} - [count] sections backward or to the previous '\}' in    the first column.  |exclusive|     Note that |exclusive-linewise| often applies.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{6. Text object selection \vimhelp{object-select} \vimhelp{text-objects}}
+    \begin{itemize}
+        \item \texttt{aw}                                     - "a word", select [count] words (see (\textrm(*word*))
+        \item \texttt{aW}                                     - "a WORD", select [count] WORDs (see (\textrm(*WORD*))
+        \item \texttt{as}                                     - "a sentence", select [count] sentences (see (\textrm(*sentence*))
+        \item \texttt{ap}                                     - "a paragraph", select [count] paragraphs (see (\textrm(*paragraph*))
+        \item \texttt{a]}, \texttt{a[}                        - "a [] block", select [count] '[' ']' blocks
+        \item \texttt{a)}, \texttt{a(}, \texttt{ab}           - "a block", select [count] blocks
+        \item \texttt{a\textgreater{}}, \texttt{a\textless{}} - "a \textless{}\textgreater{} block", select [count] \textless{}\textgreater{} blocks
+        \item \texttt{at}                                     - "a tag block", select [count] tag blocks
+        \item \texttt{a"}, \texttt{a'}, \texttt{a`}           - "a quoted string"
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{6. Text object selectionv \vimhelp{object-select} \vimhelp{text-objects}}
+    (inner variants)
+    \begin{itemize}
+        \item \texttt{iw}                                 - "inner word", select [count] words (\textrm{*word*})
+        \item \texttt{iW}                                 - "inner WORD", select [count] WORDs (see (\textrm(*WORD*))
+        \item \texttt{is}                                 - "inner sentence", select [count] sentences (see (\textrm(*sentence*))
+        \item \texttt{ip}                                 - "inner paragraph", select [count] paragraphs (see (\textrm(*paragraph*))
+        \item \texttt{i]}, \texttt{i[}                    - "inner [] block", select [count] '[' ']' blocks
+        \item \texttt{i)}, \texttt{i(}, \texttt{ib}       - "inner block", select [count] blocks
+        \item \texttt{i\textless}, \texttt{i\textgreater} - "inner \textless\textgreater block", select [count] \textless\textgreater blocks
+        \item \texttt{it}                                 - "inner tag block", select [count] tag blocks
+        \item \texttt{i"}, \texttt{i'}, \texttt{i`}       - Like a", a' and a`, but exclude the quotes
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{7. Marks \vimhelp{mark-motions}}
+    \begin{itemize}
+        \item \vimnormal{m\{a-zA-Z\}}                                - set mark \{a-zA-Z\} at cursor position (does not move the cursor, this is not a motion command).
+        \item \vimnormal{\'{}\{a-z\}}, \vimnormal{\`{}\{a-z\}}       - jump to the mark \{a-z\} in the current buffer.
+        \item \vimnormal{\'{}\{A-Z0-9\}}, \vimnormal{\`{}\{A-Z0-9\}} - jump to the mark \{A-Z0-9\} in the file where it was set
+    \end{itemize}
+    Jump to last marks:
+    \begin{itemize}
+        \item \vimnormal{\`{}\`{}} - jump to the specified location (motion is exclusive)
+        \item \vimnormal{\'{}\'{}} - jump to the first non-blank character in the line of the specified location (motion is linewise)
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Macros}
+    \begin{enumerate}
+        \item \vimnormal{qa} - start recording to register \textbf{a}
+        \item series of commands to be recorded
+        \item \vimnormal{q} stop recording (being in a normal mode)
+    \end{enumerate}
+    \begin{itemize}
+        \item \vimnormal{@a} - execute macro (from register \textbf{a})
+        \item \vimnormal{@@} - execute macro again
+        \item \vimcommand{:g/pattern/normal @a} - execute macro for given range
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{vimdiff - Use vim to compare files}
+    \begin{enumerate}
+      \item Command line interface (maybe used together with git/svn)\\
+        \texttt{\$ vimdiff file1 file2}
+      \item Start comparing within vim:
+          \begin{itemize}
+            \item \vimcommand{:diffthis} $\rightarrow$ \vimcommand{:sp file2} $\rightarrow$ \vimcommand{:diffthis}
+            \item \vimcommand{:diffoff} - turn off comparison on a file
+            \item \vimcommand{:[range]diffget} - insert from other file
+            \item \vimcommand{:[range]diffput} - insert into other file
+          \end{itemize}
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Search}
+    \vimnormal{/pattern\vimkey{CR}} (start search) $\rightarrow$ \vimnormal{/\vimkey{CR}} (continue search)\\
+    (\vimcommand{:[range]/pattern} - to use within range)
+    \begin{itemize}
+        \item regex rules:
+        \begin{itemize}
+            \item \vimcommand{\textbackslash{(}} - \vimcommand{\textbackslash{)}} - groups
+            \item \vimcommand{.} - any character
+            \item \vimcommand{*} - any number of repetition (0+)
+            \item \vimcommand{?} - optional (0 or 1)
+            \item \vimcommand{+} - positive number of repetition (1+)
+            \item \vimcommand{\textbackslash{s}}, \vimcommand{\textbackslash{d}}, \vimcommand{\textbackslash{w}}, \vimcommand{\textbackslash{a}} - whitespace, digit, word, alpha characters
+            \item \vimcommand{\string^}, \vimcommand{\$} - begin of line, end of outline
+            \item \vimcommand{\textbackslash{\textless}}, \vimcommand{\textbackslash{\textgreater}} - begin, end of word
+            \item \vimcommand{[\string^XYZ]} - exclude characters XYZ
+        \end{itemize}
+        \item \vimcommand{:set hlsearch} - enable search result highlighting
+        \item \vimcommand{:set incsearch} - search while typing (incremental)
+        \item If needed: \vimcommand{:nohl} to disable highlighting afterwards
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Power of g (global command)}
+  \vimcommand{:[range]g/pattern/cmd}
+
+  \begin{itemize}
+    \item Delete all lines matching a pattern: \vimcommand{:g/pattern/d}
+    \item Delete all lines that do not match a pattern: \vimcommand{:g!/pattern/d} or \vimcommand{:v/pattern/d}
+    \item Delete all blank lines: \vimcommand{:g/\string^\textbackslash{s}*\$/d}
+    \item Copy all lines matching a pattern to end of file: \vimcommand{:g/pattern/t\$}
+    \item Move all lines matching a pattern to end of file: \vimcommand{:g/pattern/m\$}
+    \item Copy all lines matching a pattern to register 'a'. \vimnormal{qaq}\vimcommand{:g/pattern/y A} (clearing register first)
+    \item Run a macro on matching lines (example assuming a macro recorded as 'q'): \vimcommand{:g/pattern/normal @q}
+    \item Call custom command on match \vimcommand{:g/pattern/\textbackslash{=}call foo()}
   \end{itemize}
 \end{frame}
 
 \begin{frame}
-  \frametitle{Copying and Moving Text}
-
-  \begin{enumerate}
-    \item "\{a-zA-Z0-9\}    Use register \{a-zA-Z0-9\} for next delete, yank or put (use uppercase character to append with delete and yank)
-    \item :reg[isters]  Display the contents of all registers.
-    \item \["x\]y\{motion\}   Yank \{motion\} text [into register x].
-    \item \["x\]yy    Yank [count] lines [into register x]
-    \item \["x\]Y     yank [count] lines [into register x] (synonym for yy).
-    \item \{Visual\}["x]y   Yank the highlighted text [into register x] (for \{Visual\} see Selecting Text).
-    \item \{Visual\}["x]Y   Yank the highlighted lines [into register x]
-    \item :[range]y[ank] [x]    Yank [range] lines [into register x].
-    \item :[range]y[ank] [x] \{count\}  Yank \{count\} lines, starting with last line number in [range] (default: current line), [into register x].
-    \item ["x]p, ["x]P      Put the text [from register x] after (for P before) the cursor [count] times.
-    \item ["x]gp, ["x]gP    Just like "p" ("P"), but leave the cursor just after the new text.
-    \item :[line]pu[t] [x], :[line]pu[t]! [x]   Put the text [from register x] after (before) [line] (default current line).
-  \end{enumerate}
+    \frametitle{Search and replace substitutions}
+    Common syntax (allows custom separators e.g. \vimcommand{/}, \vimcommand{\#}, \vimcommand{\$}, \vimcommand{,}):
+    {\footnotesize 
+    \begin{itemize}
+        \item \vimcommand{:\%s/pattern/replace/commands}
+        \item \vimcommand{:\%s,pattern,replace,commands}
+    \end{itemize}
+    }
+    Where
+    \begin{itemize}
+        \item pattern supports regex (only grouping needs escaping):\\
+          \vimcommand{\textbackslash{(}}, \vimcommand{\textbackslash{)}}, \vimcommand{.}, \vimcommand{*}, \vimcommand{?}, \vimcommand{+}, \vimcommand{[\string^X]}
+        \item in replace use groups with \vimcommand{\textbackslash{1}}, \vimcommand{\textbackslash{2}}, \ldots or whole match \vimcommand{\&}
+        \item commands: \vimcommand{g} (global), \vimcommand{c} (confirm), \vimcommand{i} (ignore case)
+        \item call custom command on match \vimcommand{\textbackslash{=}call foo()}
+        \item use nested replace \vimcommand{\textbackslash{=}substitute()} with \vimcommand{submatch()}
+    \end{itemize}
 \end{frame}
 
 \begin{frame}
-  \frametitle{Undo/Redo/Repeat}
-
-  \begin{enumerate}
-    \item [count]u     Undo [count] changes.
-    \item :u[ndo]   Undo one change.
-    \item [count]CTRL-R    Redo [count] changes which were undone.
-    \item :red[o]   Redo one change which was undone.
-    \item U     Undo all latest changes on one line.
-    \item .     Repeat last change, with count replaced with [count].
-  \end{enumerate}
+    \frametitle{Command mode}
+    \begin{itemize}
+        \item know how to work with ctrl+r
+        \item use the marked region as default substitute pattern
+    \end{itemize}
 \end{frame}
-
-\begin{frame}
-  \frametitle{operator \& motions}
-  \begin{enumerate}
-    \item c change
-    \item d delete
-    \item y yank into register (does not change the text)
-    \item gu make lowercase
-    \item gU make uppercase
-    \item ! filter through an external program
-    \item = filter through equalprg or C-indenting if empty
-    \item gq text formatting
-    \item g? ROT13 encoding
-    \item zf    define a fold
-  \end{enumerate}
-\end{frame}
-
-\begin{frame}
-  \frametitle{2. Left-right motions                 *left-right-motions*}
-
-  \begin{enumerate}
-    \item h, <Left>, CTRL-H, <BS>           [count] characters to the left.
-    \item l, <Right>, <Space>           [count] characters to the right.
-    \item 0         To the first character of the line.
-    \item <Home>            To the first character of the line.
-    \item f\{char\}         To [count]th occurrence of \{char\} to the right.  The
-    \item           cursor is placed on \{char\} inclusive
-    \item F\{char\}         To the [count]'th occurrence of \{char\} to the left.
-    \item           The cursor is placed on \{char\} exclusive.
-    \item t\{char\}         Till before [count]'th occurrence of \{char\} to the
-      right.  The cursor is placed on the character left of
-      \{char\} |inclusive|.
-    \item T\{char\}         Till after [count]'th occurrence of \{char\} to the left.  The cursor is placed on the character right of \{char\} exclusive.
-    \item ;         Repeat latest f, t, F or T [count] times.
-    \item ,         Repeat latest f, t, F or T in opposite direction [count] times.
-  \end{enumerate}
-\end{frame}
-
-\begin{frame}
-  \frametitle{3. Up-down motions                    *up-down-motions*}
-  k, <Up>, CTRL-P           [count] lines upward |linewise|.
-  j, <Down>, CTRL-J
-
-  CTRL-N            [count] lines downward |linewise|.
-
-  gk, g<Up>         [count] display lines upward.  |exclusive| motion.
-  Differs from 'k' when lines wrap, and when used with
-  an operator, because it's not linewise.  \{not in Vi\}
-
-  gj, g<Down>           [count] display lines downward.  |exclusive| motion.
-  G         Goto line [count], default last line, on the first
-  non-blank character |linewise|.  If 'startofline' not
-  set, keep the same column.
-  G is a one of |jump-motions|.
-  <C-End>           Goto line [count], default last line, on the last character |inclusive|. \{not in Vi\}
-  <C-Home>, gg          Goto line [count], default first line, on the first non-blank character |linewise|.  If 'startofline' not set, keep the same column.
-  :[range]      Set the cursor on the last line number in [range].
-  [range] can also be just one line number, e.g., ":1"
-  or ":'m".
-  In contrast with |G| this command does not modify the
-  |jumplist|.
-  *N%*
-  \{count\}     Go to \{count\} percentage in the file, on the first
-  non-blank in the line |linewise|.  To compute the new
-  line number this formula is used:
-  (\{count\} * number-of-lines + 99) / 100
-  See also 'startofline' option.  \{not in Vi\}
-\end{frame}
-
-\begin{frame}
-  \frametitle{4. Word motions                       *word-motions*}
-  w         [count] words forward.  |exclusive| motion.
-  <C-Right> or                  *<C-Right>* *W*
-  W         [count] WORDS forward.  |exclusive| motion.
-  e         Forward to the end of word [count] |inclusive|.
-  Does not stop in an empty line.
-  E         Forward to the end of WORD [count] |inclusive|.
-  Does not stop in an empty line.
-  <S-Left>  or                  *<S-Left>* *b*
-  b         [count] words backward.  |exclusive| motion.
-  <C-Left>  or                  *<C-Left>* *B*
-  B         [count] WORDS backward.  |exclusive| motion.
-  ge            Backward to the end of word [count] |inclusive|.
-  gE            Backward to the end of WORD [count] |inclusive|.
-\end{frame}
-
-\begin{frame}
-  \frametitle{5. Text object motions                    *object-motions*}
-  (         [count] sentences backward.  |exclusive| motion.
-  )         [count] sentences forward.  |exclusive| motion.
-  \{            [count] paragraphs backward.  |exclusive| motion.
-  \}            [count] paragraphs forward.  |exclusive| motion.
-]]          [count] sections forward or to the next '\{' in the
-  first column.  When used after an operator, then also
-stops below a '\}' in the first column.  |exclusive|
-Note that |exclusive-linewise| often applies.
-][          [count] sections forward or to the next '\}' in the
-first column.  |exclusive|
-Note that |exclusive-linewise| often applies.
-[[          [count] sections backward or to the previous '\{' in
-      the first column.  |exclusive|
-      Note that |exclusive-linewise| often applies.
-    []          [count] sections backward or to the previous '\}' in
-    the first column.  |exclusive|
-    Note that |exclusive-linewise| often applies.
-\end{frame}
-
-\begin{frame}
-    \frametitle{6. Text object selection            *object-select* *text-objects*}
-    yaw         "a word", select [count] words (see |word|).
-    Leading or trailing white space is included, but not
-    counted.
-    When used in Visual linewise mode "aw" switches to
-    Visual characterwise mode.
-    iw          "inner word", select [count] words (see |word|).
-    White space between words is counted too.
-    When used in Visual linewise mode "iw" switches to
-    Visual characterwise mode.
-    aW          "a WORD", select [count] WORDs (see |WORD|).
-    Leading or trailing white space is included, but not
-    counted.
-    When used in Visual linewise mode "aW" switches to
-    Visual characterwise mode.
-    iW          "inner WORD", select [count] WORDs (see |WORD|).
-    White space between words is counted too.
-    When used in Visual linewise mode "iW" switches to
-    Visual characterwise mode.
-    as          "a sentence", select [count] sentences (see
-    |sentence|).
-    When used in Visual mode it is made characterwise.
-    is          "inner sentence", select [count] sentences (see
-    |sentence|).
-    When used in Visual mode it is made characterwise.
-    ap          "a paragraph", select [count] paragraphs (see
-    |paragraph|).
-    Exception: a blank line (only containing white space)
-    is also a paragraph boundary.
-    When used in Visual mode it is made linewise.
-    ip          "inner paragraph", select [count] paragraphs (see
-    |paragraph|).
-    Exception: a blank line (only containing white space)
-    is also a paragraph boundary.
-    When used in Visual mode it is made linewise.
-a]                      *v\_a]* *v\_a[* *a]* *a[*
-  a[            "a [] block", select [count] '[' ']' blocks.  This
-    goes backwards to the [count] unclosed '[', and finds
-    the matching ']'.  The enclosed text is selected,
-    including the '[' and ']'.
-    When used in Visual mode it is made characterwise.
-i]                      *v\_i]* *v\_i[* *i]* *i[*
-  i[            "inner [] block", select [count] '[' ']' blocks.  This
-    goes backwards to the [count] unclosed '[', and finds
-    the matching ']'.  The enclosed text is selected,
-    excluding the '[' and ']'.
-    When used in Visual mode it is made characterwise.
-    a)                          *v\_a)* *a)* *a(*
-    a(                          *v\_ab* *v\_a(* *ab*
-    ab          "a block", select [count] blocks, from "[count] [(" to
-      the matching ')', including the '(' and ')' (see
-      |[(|).  Does not include white space outside of the
-        parenthesis.
-        When used in Visual mode it is made characterwise.
-
-        i) i(   ib          "inner block", select [count] blocks, from "[count] [("
-          to the matching ')', excluding the '(' and ')' (see
-          |[(|).
-            When used in Visual mode it is made characterwise.
-            a>, a<          "a <> block", select [count] <> blocks, from the
-            [count]'th unmatched '<' backwards to the matching
-            '>', including the '<' and '>'.
-            When used in Visual mode it is made characterwise.
-
-            i<, i<          "inner <> block", select [count] <> blocks, from
-            the [count]'th unmatched '<' backwards to the matching
-            '>', excluding the '<' and '>'.
-            When used in Visual mode it is made characterwise.
-            at          "a tag block", select [count] tag blocks, from the
-            [count]'th unmatched "<aaa>" backwards to the matching
-            "</aaa>", including the "<aaa>" and "</aaa>".
-            See |tag-blocks| about the details.
-            When used in Visual mode it is made characterwise.
-            it          "inner tag block", select [count] tag blocks, from the
-            [count]'th unmatched "<aaa>" backwards to the matching
-            "</aaa>", excluding the "<aaa>" and "</aaa>".
-            See |tag-blocks| about the details.
-            When used in Visual mode it is made characterwise.
-
-          a\} a\{   aB          "a Block", select [count] Blocks, from "[count] [\{" to
-              the matching '\}', including the '\{' and '\}' (see
-              |[\{|).
-                  When used in Visual mode it is made characterwise.
-
-                i\}         i\{ iB          "inner Block", select [count] Blocks, from "[count] [\{"
-                    to the matching '\}', excluding the '\{' and '\}' (see
-                    |[\{|).
-                        When used in Visual mode it is made characterwise.
-
-                        a" a'   a`                          *v\_a`* *a`*
-                        "a quoted string".  Selects the text from the previous
-                        quote until the next quote.  The 'quoteescape' option
-                        is used to skip escaped quotes.
-                        Only works within one line.
-                        When the cursor starts on a quote, Vim will figure out
-                        which quote pairs form a string by searching from the
-                        start of the line.
-                        Any trailing white space is included, unless there is
-                        none, then leading white space is included.
-                        When used in Visual mode it is made characterwise.
-                        Repeating this object in Visual mode another string is
-                        included.  A count is currently not used.
-
-                        i" i'   i
-                        Like a", a' and a`, but exclude the quotes and
-                        repeating won't extend the Visual selection.
-                        Special case: With a count of 2 the quotes are
-                        included, but no extra white space as with a"/a'/a`.
-
-
-                      \end{frame}
-
-\begin{frame}[fragile]
-  \frametitle{7. Marks                  *mark-motions* *}
-
-                        \begin{verbatim}
-                        Jumping to a mark can be done in two ways:
-                        1. With ` (backtick):     The cursor is positioned at the specified location
-        and the motion is |exclusive|.
-        2. With '' (single quote): The cursor is positioned on the first non-blank
-        character in the line of the specified location and
-        the motion is linewise.
-
-
-            *m* *mark* *Mark*
-            m\{a-zA-Z\}     Set mark \{a-zA-Z\} at cursor position (does not move
-      the cursor, this is not a motion command).
-
-      '\{a-z\}  `\{a-z\}        Jump to the mark \{a-z\} in the current buffer.
-
-
-            *'A* *'0* *`A* *`0*
-            '\{A-Z0-9\}  `\{A-Z0-9\}    To the mark \{A-Z0-9\} in the file where it was set (not
-      a motion command when in another file).  \{not in Vi\}
-      marks 
-      :reg[isters] \{arg\}  Display the contents of the numbered and named
-      registers that are mentioned in \{arg\}.  For example:
-        :dis 1a
-      to display registers '1' and 'a'.  Spaces are allowed
-      in \{arg\}.  \{not in Vi\}
-      :di[splay] [arg]  Same as :registers.  \{not in Vi\}
-      ["x]y\{motion\}       Yank \{motion\} text [into register x].  When no
-      characters are to be yanked (e.g., "y0" in column 1),
-      this is an error when 'cpoptions' includes the 'E'
-      flag.
-      ["x]yy            Yank [count] lines [into register x] |linewise|.
-      ["x]Y         yank [count] lines [into register x] (synonym for
-      yy, |linewise|).  If you like "Y" to work from the
-      cursor to the end of line (which is more logical,
-      but not Vi-compatible) use ":map Y y\$".
-      \{Visual\}["x]y       Yank the highlighted text [into register x] (for
-      \{Visual\} see |Visual-mode|).  \{not in Vi\}
-      \{Visual\}["x]Y       Yank the highlighted lines [into register x] (for
-      \{Visual\} see |Visual-mode|).  \{not in Vi\}
-      :[range]y[ank] [x]    Yank [range] lines [into register x].
-      :[range]y[ank] [x] \{count\}
-      Yank \{count\} lines, starting with last line number
-      in [range] (default: current line |cmdline-ranges|),
-      [into register x].
-      ["x]p         Put the text [from register x] after the cursor
-      [count] times.  \{Vi: no count\}
-      ["x]P         Put the text [from register x] before the cursor
-      [count] times.  \{Vi: no count\}
-      ["x]<MiddleMouse> Put the text from a register before the cursor [count]
-      times.  Uses the "* register, unless another is
-      specified.
-      Leaves the cursor at the end of the new text.
-      Using the mouse only works when 'mouse' contains 'n'
-      or 'a'.
-      \{not in Vi\}
-      If you have a scrollwheel and often accidentally paste
-      text, you can use these mappings to disable the
-      pasting with the middle mouse button:
-        :map <MiddleMouse> <Nop>
-        :imap <MiddleMouse> <Nop>
-      You might want to disable the multi-click versions
-      too, see |double-click|.
-      ["x]gp            Just like "p", but leave the cursor just after the new
-      text.  \{not in Vi\}
-      ["x]gP            Just like "P", but leave the cursor just after the new
-      text.  \{not in Vi\}
-  \end{verbatim}
-\end{frame}
-
-\begin{frame}
-  \frametitle{registers}
-
-  \begin{enumerate}
-    \item "\{a-zA-Z0-9\}    Use register \{a-zA-Z0-9\} for next delete, yank or put (use uppercase character to append with delete and yank)
-    \item :reg[isters]
-  \end{enumerate}
-\end{frame}
-
-\begin{frame}
-  \frametitle{macros}
-  \begin{enumerate}
-    \item qd    start recording to register d
-    \item ...   your complex series of commands
-    \item q     stop recording
-    \item @d    execute your macro
-    \item @@    execute your macro again
-    \item :g/pattern/normal @q
-  \end{enumerate}
-\end{frame}
-
-\begin{frame}
-  \frametitle{vimdiff}
-  \begin{enumerate}
-    \item vimdiff file1 file2
-    \item :diffthis :sp file2 :diffthis
-    \item :diffoff
-    \item [c ]c
-    \item rangediffget
-    \item rangediffput
-  \end{enumerate}
-\end{frame}
-
-\begin{frame}
-  \frametitle{substitutions}
-      %  \\( \\) . * + [^ ]
-      %  \& \1 \2
-      g c
-      =
-      usage of * \#
-      nohl
-      \= call foo()
-      \= substitute
-      submatch()
-
-let g:I=1
-%g/^- id: \d\+$/ s/\d\+/\=g:I/|let g:I=g:I+1
-
-%:.+1,$g/^- id: \d\+$/normal! 0^A
-
-\end{frame}
-
-\begin{frame}
-  \frametitle{Command mode}
-  working with ctrl+r
-\end{frame}
-
 
 \section{PLUGINS}
 \begin{frame}
-  \frametitle{nerdtree, vim-nerdtree-tab}
-  Navigate through filesystem.
-  Allows open, open split h/v, open tab, quick preview.
-  Support for bookmarks.
-  :NERDTreeFind
-  plugin nerdtree-tabs keeps nerd tree toggle accross all tabs
+    \frametitle{vundle}
+    \begin{itemize}
+        \item easy way to manage
+        \item clean and readable vimrc
+        \item rule of thumb: extract your config and store it as a plugin on github
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{nerdtree, vim-nerdtree-tab, nerdtree-toggle, vim-rooter}
+    \begin{itemize}
+        \item Navigate through filesystem,
+        \item Allows open, open split h/v, open tab, quick preview,
+        \item Support for bookmarks.
+        \item :NERDTreeFind
+        \item  plugin nerdtree-tabs keeps nerd tree toggle accross all tabs
+    \end{itemize}
+ \includegraphics[scale=0.33]{vim_nerdtree_example.png}\\
+\end{frame}
+
+\begin{frame}
+  \frametitle{YouCompleteMe}
+    works ok with --system-clang (still recommend clion as default)
+    have not checked carefully the rope variant, but it seemed also ok (still recommend pycharm)
 \end{frame}
 
 \begin{frame}
   \frametitle{tagbar}
-  outline with tags, variables, classes, function
+ \includegraphics[scale=0.33]{vim_tagbar_example.png}\\
 \end{frame}
 
 \begin{frame}
   \frametitle{undotree}
   visualize (with diff) and navigate through the history of file changel
+ \includegraphics[scale=0.33]{vim_undotree_example.png}\\
+\end{frame}
+
+\begin{frame}
+  \frametitle{git-gutter}
+  git mark modified lines (useful)
 \end{frame}
 
 \begin{frame}
@@ -583,9 +551,23 @@ let g:I=1
   git facilities
 \end{frame}
 
-\begin{frame}
+\begin{frame}[fragile]
   \frametitle{tabular}
-
+{\footnotesize
+\begin{verbatim}
+| column | column|
+row | value | value|
+other row | other value | yet another value |
+\end{verbatim}
+}
+\vimcommand{:\%Tabularize /|}
+{\footnotesize
+\begin{verbatim}
+          | column      | column            |
+row       | value       | value             |
+other row | other value | yet another value |
+\end{verbatim}
+}
 \end{frame}
 
 \begin{frame}
@@ -594,6 +576,7 @@ let g:I=1
 
 \begin{frame}
   \frametitle{vim-slime}
+  useful to trigger external commands
 \end{frame}
 
 
@@ -601,77 +584,182 @@ let g:I=1
   \frametitle{abolish}
 \end{frame}
 
-\begin{frame}
-  \frametitle{abbreviations / and hideing}
-      iab
-      conceal demo
-      %if has('conceal')
-      %  " may be adgms
-      %  let g:tex\_conceal="adgm"
-      %  set conceallevel=2
-      %  highlight! link Conceal texMathSymbol
-      %endif
-      %syn match texMathSymbol '\\alpha\>' contained conceal cchar=α
-      %syn match texMathSymbol '\\beta\>' contained conceal cchar=β
-      %syn match texMathSymbol '\\gamma\>' contained conceal cchar=γ
+\begin{frame}[fragile]
+    \frametitle{Abbreviations and hiding text}
+    \begin{itemize}
+      \item \vimcommand{:iab tte text\_to\_expand} - define 'tte' abbreviation
+        \item Conceal known chars outside currently edited line:\\
+ \includegraphics[scale=0.6]{vim_conceal_example.png}\\
+\textrm{Below sample config:}
+{\footnotesize
+\begin{verbatim}
+if has('conceal')
+  let g:tex_conceal="adgms"
+  set conceallevel=2
+  highlight! link Conceal texMathSymbol
+endi
+
+syn match texMathSymbol '\\alpha\>' contained conceal cchar=αA
+syn match texMathSymbol '\\beta\>' contained conceal cchar=βB
+syn match texMathSymbol '\\gamma\>' contained conceal cchar=γG
+\end{verbatim}
+}
+    \end{itemize}
 \end{frame}
 
 \begin{frame}
-  \frametitle{expressions register}
-  <C-r>=<C-r>"<CR>
+    \frametitle{Expressions register}
+    In \viminsert{\vimmode{insert}} mode:
+    \begin{enumerate}
+        \item \viminsert{\textless{}C-r\textgreater{}=}
+        \item enter VimScript command to be evaluated
+    \end{enumerate}
+    This can be used as a in place calculator, e.g. on line:\\
+    \textrm{6 * 7 =}\\
+    the following sequence may be used to append a result:\\
+    \vimnormal{0yt=A\textless{}C-r\textgreater{}=\textless{}C-r\textgreater>a\textless{}CR\textgreater}
 \end{frame}
 
 \begin{frame}
-  \frametitle{colorschemes / cursorcolumn line / hexhighlight}
+    \frametitle{colorschemes / cursorcolumn line / hexhighlight}
+    tricks:i
+    \begin{itemize}
+        \item    rotate over all color schemes
+        \item pick the name of current text segment
+        \item set the color for custom element
+        \item display the html color format \#156123 with real color
+    \end{itemize}
 \end{frame}
 
 \begin{frame}
-  \frametitle{spell check}
-      :setlocal spell spelllang=en\_us
-    ]s          Move to next misspelled word after the cursor.
-    A count before the command can be used to repeat.
-    'wrapscan' applies.
-    [s          Like "]s" but search backwards, find the misspelled
-    word before the cursor.  Doesn't recognize words
-    split over two lines, thus may stop at words that are
-    not highlighted as bad.  Does not stop at word with
-    missing capital at the start of a line.
-    z=          For the word under/after the cursor suggest correctly
-    spelled words.  This also works to find alternatives
-    for a word that is not highlighted as a bad word,
-    e.g., when the word after it is bad.
+    \frametitle{Spellchecker}
+    \begin{itemize}
+        \item \vimcommand{:setlocal spell spelllang=en\_us} to set language (e.g. )
+        \item \vimcommand{:set spell} to enable spellchecker
+        \item \vimnormal{]s} Move to next misspelled word after the cursor.
+        \item \vimnormal{[s} Like "]s" but search backwards.
+        \item \vimnormal{z=} For the word under/after the cursor suggest correctly spelled words. This also works to find alternatives for a word that is not highlighted as a bad word, e.g., when the word after it is bad.
+    \end{itemize}
+    additional features: add words to dictionary etc.
 \end{frame}
 
 \begin{frame}
-    \frametitle{folds}
-    zf{motion}, {Visual}zf  Operator to create a fold.  This only works when 'foldmethod' is "manual" or "marker".  The new fold will be closed for the "manual" method.  'foldenable' will be set.
-    :{range}fo[ld]   Create a fold for the lines in {range}.  Works like "zf".
-    zd      Delete one fold at the cursor.
-    zo      Open one fold under the cursor.
-    zO      Open all folds under the cursor recursively.
-    zc      Close one fold under the cursor.
-    zC      Close all folds under the cursor recursively.
+    \frametitle{Folds}
+    \begin{itemize}
+        \item \vimnormal{zf\{motion\}}, \vimvisual{\{visual\}zf} Operator to create a fold.  This only works when 'foldmethod' is "manual" or "marker".  The new fold will be closed for the "manual" method.  'foldenable' will be set.
+        \item \vimcommand{:[range]fo[ld]} Create a fold for the lines in {range}.  Works like "zf".
+        \item \vimnormal{zd} - delete one fold at the cursor.
+        \item \vimnormal{zo} - open one fold under the cursor.
+        \item \vimnormal{zO} - open all folds under the cursor recursively.
+        \item \vimnormal{zc} - close one fold under the cursor.
+        \item \vimnormal{zC} - close all folds under the cursor recursively.
+    \end{itemize}
 \end{frame}
 
 \begin{frame}
-  \frametitle{Other features}
-  list number
-    built in autocomplete / no prob with connecting external tools
-    topics to cover:
-    context autocomplete
-    inplace static source code analyser
-    CA CX CxCf CE CY
+    \frametitle{Other features}
+    \begin{itemize}
+        \item list number
+        \item built in autocomplete / no prob with connecting external tools
+        \item topics to cover:
+        \item context autocomplete
+        \item inplace static source code analyser
+    \end{itemize}
 \end{frame}
 
 \begin{frame}
-    vimrc / recommended setup / mappings vimscript basic (function declaration / scopes / if / types / )
-    (sort)
-    os interaction (in place edit)
-    external indent
-    vimcasts.org
-    vimgolf.org
-    http://learnvimscriptthehardway.stevelosh.com/
+    \frametitle{Remaining issues}
+    \begin{itemize}
+        \item vimrc / recommended setup / mappings vimscript basic (function declaration / scopes / if / types / )
+        \item  (sort)
+        \item    os interaction (in place edit)
+        \item   external indent
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Useful links}
+    \begin{itemize}
+        \item http://vimcasts.org
+        \item http://vimgolf.org
+        \item http://vimregex.com
+        \item http://learnvimscriptthehardway.stevelosh.com/
+        \item https://github.com/vim/vim
+        \item https://github.com/vim-scripts
+        \item http://vim.org
+    \end{itemize}
 \end{frame}
 
 \end{document}
+
+
+
+%            \begin{verbatim}
+%            *m* *mark* *Mark*
+%            m\{a-zA-Z\}     Set mark \{a-zA-Z\} at cursor position (does not move
+%      the cursor, this is not a motion command).
+%
+%      '\{a-z\}  `\{a-z\}        Jump to the mark \{a-z\} in the current buffer.
+%
+%
+%            *'A* *'0* *`A* *`0*
+%            '\{A-Z0-9\}  `\{A-Z0-9\}    To the mark \{A-Z0-9\} in the file where it was set (not
+%      a motion command when in another file).  \{not in Vi\}
+%      marks 
+%      
+%      
+%      :reg[isters] \{arg\}  Display the contents of the numbered and named
+%      registers that are mentioned in \{arg\}.  For example:
+%        :dis 1a
+%      to display registers '1' and 'a'.  Spaces are allowed
+%      in \{arg\}.  \{not in Vi\}
+%      :di[splay] [arg]  Same as :registers.  \{not in Vi\}
+%      ["x]y\{motion\}       Yank \{motion\} text [into register x].  When no
+%      characters are to be yanked (e.g., "y0" in column 1),
+%      this is an error when 'cpoptions' includes the 'E'
+%      flag.
+%      ["x]yy            Yank [count] lines [into register x] |linewise|.
+%      ["x]Y         yank [count] lines [into register x] (synonym for
+%      yy, |linewise|).  If you like "Y" to work from the
+%      cursor to the end of line (which is more logical,
+%      but not Vi-compatible) use ":map Y y\$".
+%      \{Visual\}["x]y       Yank the highlighted text [into register x] (for
+%      \{Visual\} see |Visual-mode|).  \{not in Vi\}
+%      \{Visual\}["x]Y       Yank the highlighted lines [into register x] (for
+%      \{Visual\} see |Visual-mode|).  \{not in Vi\}
+%      :[range]y[ank] [x]    Yank [range] lines [into register x].
+%      :[range]y[ank] [x] \{count\}
+%      Yank \{count\} lines, starting with last line number
+%      in [range] (default: current line |cmdline-ranges|),
+%      [into register x].
+%      ["x]p         Put the text [from register x] after the cursor
+%      [count] times.  \{Vi: no count\}
+%      ["x]P         Put the text [from register x] before the cursor
+%      [count] times.  \{Vi: no count\}
+%      ["x]<MiddleMouse> Put the text from a register before the cursor [count]
+%      times.  Uses the "* register, unless another is
+%      specified.
+%      Leaves the cursor at the end of the new text.
+%      Using the mouse only works when 'mouse' contains 'n'
+%      or 'a'.
+%      \{not in Vi\}
+%      If you have a scrollwheel and often accidentally paste
+%      text, you can use these mappings to disable the
+%      pasting with the middle mouse button:
+%        :map <MiddleMouse> <Nop>
+%        :imap <MiddleMouse> <Nop>
+%      You might want to disable the multi-click versions
+%      too, see |double-click|.
+%      ["x]gp            Just like "p", but leave the cursor just after the new
+%      text.  \{not in Vi\}
+%      ["x]gP            Just like "P", but leave the cursor just after the new
+%      text.  \{not in Vi\}
+%  \end{verbatim}
+%
+
+%let g:I=1
+%g/^- id: \d\+$/ s/\d\+/\=g:I/|let g:I=g:I+1
+
+%:.+1,$g/^- id: \d\+$/normal! 0^A
+
 
