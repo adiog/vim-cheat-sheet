@@ -90,6 +90,9 @@
 \newcommand{\vimvisual}[1]{\texttt{\textcolor{purple}{#1}}}
 \newcommand{\vimrc}[1]{\texttt{\textcolor{brown}{#1}}}
 
+\newcommand{\vimoperator}[1]{\texttt{\textcolor{orange}{#1}}}
+\newcommand{\vimmotion}[1]{\texttt{\textcolor{orange}{#1}}}
+
 \newcommand{\vimhelp}[1]{\vimcommand{:h #1}}
 
 \newcommand{\vimkey}[1]{\textless{}#1\textgreater{}}
@@ -289,105 +292,111 @@
 \begin{frame}
     \frametitle{1. Operators}
     \begin{enumerate}
-        \item \texttt{c}  - change
-        \item \texttt{d}  - delete
-        \item \texttt{y}  - yank into register (does not change the text)
-        \item \texttt{x}  - cut into register
-        \item \texttt{gu} - make lowercase
-        \item \texttt{gU} - make uppercase
-        \item \texttt{!}  - filter through an external program
-        \item \texttt{=}  - filter through equalprg or C-indenting if empty
-        \item \texttt{gq} - text formatting
-        \item \texttt{g?} - ROT13 encoding aka boss mode
+        \item \vimoperator{c}  - change
+        \item \vimoperator{d}  - delete
+        \item \vimoperator{y}  - yank into register (does not change the text)
+        \item \vimoperator{x}  - cut into register
+        \item \vimoperator{gu} - make lowercase
+        \item \vimoperator{gU} - make uppercase
+        \item \vimoperator{!}  - filter through an external program
+        \item \vimoperator{=}  - filter through equalprg or C-indenting if empty
+        \item \vimoperator{gq} - text formatting
+        \item \vimoperator{g?} - ROT13 encoding aka boss mode
     \end{enumerate}
 \end{frame}
 
 \begin{frame}
     \frametitle{2. Left-right motions \vimhelp{left-right-motions}}
-    \begin{enumerate}
-      \item \texttt{h}, \texttt{\vimkey{Left}}, \texttt{\vimkey{C-h}}, \texttt{\vimkey{BS}} - [count] characters to the left
-        \item \texttt{l}, \texttt{\vimkey{Right}}, \texttt{\textless{}Space\textgreater{}}           - [count] characters to the right
-        \item \texttt{0}, \texttt{\textless{}Home\textgreater{}}                              - to the first character of the line
-        \item \texttt{f\{char\}}                                       - to [count]th occurrence of \{char\} to the right. The cursor is placed on \{char\} inclusive
-        \item \texttt{F\{char\}}                                       - to the [count]'th occurrence of \{char\} to the left. The cursor is placed on \{char\} exclusive.
-        \item \texttt{t\{char\}}                                       - till before [count]'th occurrence of \{char\} to the right.  The cursor is placed on the character left of \{char\} |inclusive|
-        \item \texttt{T\{char\}}                                       - till after [count]'th occurrence of \{char\} to the left.  The cursor is placed on the character right of \{char\} exclusive.
-        \item \texttt{;}                                               - repeat latest f, t, F or T [count] times
-        \item \texttt{,}                                               - repeat latest f, t, F or T in opposite direction [count] times
-    \end{enumerate}
+    \begin{itemize}
+        \item \vimmotion{h}, \vimmotion{\vimkey{Left}}, \vimmotion{\vimkey{C-h}}, \vimmotion{\vimkey{BS}} - [count] characters to the left
+        \item \vimmotion{l}, \vimmotion{\vimkey{Right}}, \vimmotion{\textless{}Space\textgreater{}} - [count] characters to the right
+        \item \vimmotion{0}, \vimmotion{\textless{}Home\textgreater{}} - to the first character of the line
+        \item \vimmotion{f\{char\}} - to [count]th occurrence of \{char\} to the right.\\ The cursor is placed on \{char\} inclusive
+        \item \vimmotion{F\{char\}} - to the [count]'th occurrence of \{char\} to the left. The cursor is placed on \{char\} exclusive.
+        \item \vimmotion{t\{char\}} - till before [count]'th occurrence of \{char\} to the right. The cursor is placed on the character left of \{char\} inclusive.
+        \item \vimmotion{T\{char\}} - till after [count]'th occurrence of \{char\} to the left. The cursor is placed on the character right of \{char\} exclusive.
+        \item \vimmotion{;} - repeat latest f, t, F or T [count] times
+        \item \vimmotion{,} - repeat latest f, t, F or T in opposite direction [count] times
+    \end{itemize}
 \end{frame}
 
 \begin{frame}
     \frametitle{3. Up-down motions \vimhelp{up-down-motions}}
     \begin{itemize}
-        \item \texttt{k}, \texttt{\textless{}Up\textgreater{}}, \texttt{C-p}                  - lines upward |linewise|
-        \item \texttt{j}, \texttt{\textless{}Down\textgreater{}}, \texttt{C-j}, \texttt{C-n}  - lines downward |linewise|
-        \item \texttt{gk}, \texttt{g\textless{}Up\textgreater{}}                              - display lines upward.  not linewise
-        \item \texttt{gj}, \texttt{g\textless{}Down\textgreater{}}                            - display lines downward.  |exclusive| motion.
-        \item \texttt{G}                                               - goto line, default first line.
-        \item \texttt{\textless{}C-End\textgreater{}}                                         - goto line [count], default last line.
-        \item \texttt{\textless{}C-Home\textgreater{}}, \texttt{gg}                           - goto line [count], default first line, on the first non-blank character |linewise|i
-        \item \texttt{:[range]}                                        - set the cursor on the last line number in [range].
-        \item \texttt{N\%}                                             - go to \{count\} percentage in the file
+        \item \vimmotion{k}, \vimmotion{\textless{}Up\textgreater{}}, \vimmotion{C-p} - [count] lines upward (linewise)
+        \item \vimmotion{j}, \vimmotion{\textless{}Down\textgreater{}}, \vimmotion{C-j}, \vimmotion{C-n} - [count] lines downward (linewise)
+        \item \vimmotion{gk}, \vimmotion{g\textless{}Up\textgreater{}} - [count] display-wise lines upward (useful when lines are wrapped)
+        \item \vimmotion{gj}, \vimmotion{g\textless{}Down\textgreater{}} - [count] display-wise lines downward (useful when lines are wrapped)
+        \item \vimmotion{G} - goto line, default first line
+        \item \vimmotion{\textless{}C-End\textgreater{}} - goto line [count], default last line
+        \item \vimmotion{\textless{}C-Home\textgreater{}}, \vimmotion{gg} - goto line [count], default first line, on the first non-blank character
+        \item \vimmotion{:[range]} - set the cursor on the last line number in [range]
+        \item \vimmotion{N\%} - go to \{count\} percentage in the file
     \end{itemize}
 \end{frame}
 
 \begin{frame}
     \frametitle{4. Word motions \vimhelp{word-motions}}
     \begin{itemize}
-        \item \texttt{w}                            - [count] words forward.  |exclusive| motion.
-        \item \texttt{W}, \texttt{\vimkey{C-Right}} - [count] WORDS forward.  |exclusive| motion.
-        \item \texttt{e}                            - Forward to the end of word [count] |inclusive|.
-        \item \texttt{E}                            - Forward to the end of WORD [count] |inclusive|.
-        \item \texttt{\vimkey{S-Left}}, \texttt{b}  - [count] words backward.  |exclusive| motion.
-        \item \texttt{\vimkey{C-Left}}, \texttt{B}  - [count] WORDS backward.  |exclusive| motion.
-        \item \texttt{ge}                           - Backward to the end of word [count] |inclusive|.
-        \item \texttt{gE}                           - Backward to the end of WORD [count] |inclusive|.
+      \item \vimmotion{w}                               - [count] words forward.  (exclusive)
+      \item \vimmotion{W}, \vimmotion{\vimkey{C-Right}} - [count] WORDS forward.  (exclusive)
+      \item \vimmotion{e}                               - forward to the end of word [count] (inclusive)
+      \item \vimmotion{E}                               - forward to the end of WORD [count] (inclusive)
+      \item \vimmotion{\vimkey{S-Left}}, \vimmotion{b}  - [count] words backward.  (exclusive)
+      \item \vimmotion{\vimkey{C-Left}}, \vimmotion{B}  - [count] WORDS backward.  (exclusive)
+      \item \vimmotion{ge}                              - backward to the end of word [count] (inclusive)
+      \item \vimmotion{gE}                              - backward to the end of WORD [count] (inclusive)
     \end{itemize}
+    {\footnotesize 
+    A word consists of a sequence of letters, digits and underscores, or a
+    sequence of other non-blank characters, separated with white space (spaces,
+    tabs, EOL). A WORD consists of a sequence of non-blank characters, separated with white
+    space.}
 \end{frame}
 
 \begin{frame}
     \frametitle{5. Text object motions \vimhelp{object-motions}}
+    \vimhelp{text-objects} 
     \begin{itemize}
-        \item \texttt{(}  - [count] sentences backward.  |exclusive| motion.
-        \item \texttt{)}  - [count] sentences forward.  |exclusive| motion.
-        \item \texttt{\{} - [count] paragraphs backward.  |exclusive| motion.
-        \item \texttt{\}} - [count] paragraphs forward.  |exclusive| motion.
-        \item \texttt{]]} - [count] sections forward or to the next '\{' in the   first column.  When used after an operator, then also stops below a '\}' in the first column.  |exclusive| Note that |exclusive-linewise| often applies.
-        \item \texttt{][} - [count] sections forward or to the next '\}' in the first column.  |exclusive| Note that |exclusive-linewise| often applies. 
-        \item \texttt{[[} - [count] sections backward or to the previous '\{' in       the first column.  |exclusive|       Note that |exclusive-linewise| often applies.
-        \item \texttt{[]} - [count] sections backward or to the previous '\}' in    the first column.  |exclusive|     Note that |exclusive-linewise| often applies.
+      \item \vimmotion{(} - [count] sentences backward (exclusive)
+      \item \vimmotion{)} - [count] sentences forward (exclusive)
+      \item \vimmotion{\{} - [count] paragraphs backward (exclusive)
+      \item \vimmotion{\}} - [count] paragraphs forward (exclusive)
+      \item \vimmotion{]]} - [count] sections forward or to the next '\{' in the first column.When used after an operator, then also stops below a '\}' in the first column (exclusive)
+      \item \vimmotion{][} - [count] sections forward or to the next '\}' in the first column (exclusive)
+      \item \vimmotion{[[} - [count] sections backward or to the previous '\{' in the first column (exclusive)
+      \item \vimmotion{[]} - [count] sections backward or to the previous '\}' in the first column (exclusive)
     \end{itemize}
 \end{frame}
 
 \begin{frame}
-    \frametitle{6. Text object selection \vimhelp{object-select} \vimhelp{text-objects}}
+    \frametitle{6. Text object selection \vimhelp{object-select}}
     \begin{itemize}
-        \item \texttt{aw}                                     - "a word", select [count] words (see (\textrm(*word*))
-        \item \texttt{aW}                                     - "a WORD", select [count] WORDs (see (\textrm(*WORD*))
-        \item \texttt{as}                                     - "a sentence", select [count] sentences (see (\textrm(*sentence*))
-        \item \texttt{ap}                                     - "a paragraph", select [count] paragraphs (see (\textrm(*paragraph*))
-        \item \texttt{a]}, \texttt{a[}                        - "a [] block", select [count] '[' ']' blocks
-        \item \texttt{a)}, \texttt{a(}, \texttt{ab}           - "a block", select [count] blocks
-        \item \texttt{a\textgreater{}}, \texttt{a\textless{}} - "a \textless{}\textgreater{} block", select [count] \textless{}\textgreater{} blocks
-        \item \texttt{at}                                     - "a tag block", select [count] tag blocks
-        \item \texttt{a"}, \texttt{a'}, \texttt{a`}           - "a quoted string"
+        \item \vimmotion{aw} - "a word", select [count] words (see (\textrm(*word*))
+        \item \vimmotion{aW} - "a WORD", select [count] WORDs (see (\textrm(*WORD*))
+        \item \vimmotion{as} - "a sentence", select [count] sentences (see (\textrm(*sentence*))
+        \item \vimmotion{ap} - "a paragraph", select [count] paragraphs (see (\textrm(*paragraph*))
+        \item \vimmotion{a]}, \vimmotion{a[} - "a [] block", select [count] '[' ']' blocks
+        \item \vimmotion{a)}, \vimmotion{a(}, \vimmotion{ab} - "a block", select [count] blocks
+        \item \vimmotion{a\textgreater{}}, \vimmotion{a\textless{}} - "a \textless{}\textgreater{} block", select [count] \textless{}\textgreater{} blocks
+        \item \vimmotion{at} - "a tag block", select [count] tag blocks
+        \item \vimmotion{a"}, \vimmotion{a'}, \vimmotion{a`} - "a quoted string"
     \end{itemize}
 \end{frame}
 
 \begin{frame}
-    \frametitle{6. Text object selectionv \vimhelp{object-select} \vimhelp{text-objects}}
+    \frametitle{6. Text object selectionv \vimhelp{object-select}}
     (inner variants)
     \begin{itemize}
-        \item \texttt{iw}                                 - "inner word", select [count] words (\textrm{*word*})
-        \item \texttt{iW}                                 - "inner WORD", select [count] WORDs (see (\textrm(*WORD*))
-        \item \texttt{is}                                 - "inner sentence", select [count] sentences (see (\textrm(*sentence*))
-        \item \texttt{ip}                                 - "inner paragraph", select [count] paragraphs (see (\textrm(*paragraph*))
-        \item \texttt{i]}, \texttt{i[}                    - "inner [] block", select [count] '[' ']' blocks
-        \item \texttt{i)}, \texttt{i(}, \texttt{ib}       - "inner block", select [count] blocks
-        \item \texttt{i\textless}, \texttt{i\textgreater} - "inner \textless\textgreater block", select [count] \textless\textgreater blocks
-        \item \texttt{it}                                 - "inner tag block", select [count] tag blocks
-        \item \texttt{i"}, \texttt{i'}, \texttt{i`}       - Like a", a' and a`, but exclude the quotes
+        \item \vimmotion{iw}                                 - "inner word", select [count] words (\textrm{*word*})
+        \item \vimmotion{iW}                                 - "inner WORD", select [count] WORDs (see (\textrm(*WORD*))
+        \item \vimmotion{is}                                 - "inner sentence", select [count] sentences (see (\textrm(*sentence*))
+        \item \vimmotion{ip}                                 - "inner paragraph", select [count] paragraphs (see (\textrm(*paragraph*))
+        \item \vimmotion{i]}, \vimmotion{i[}                 - "inner [] block", select [count] '[' ']' blocks
+        \item \vimmotion{i)}, \vimmotion{i(}, \vimmotion{ib} - "inner block", select [count] blocks
+        \item \vimmotion{i\textless}, \vimmotion{i\textgreater} - "inner \textless\textgreater block", select [count] \textless\textgreater blocks
+        \item \vimmotion{it}                                 - "inner tag block", select [count] tag blocks
+        \item \vimmotion{i"}, \vimmotion{i'}, \vimmotion{i`} - like a", a' and a`, but exclude the quotes
     \end{itemize}
 \end{frame}
 
@@ -437,7 +446,7 @@
 \begin{frame}
     \frametitle{Search}
     \vimnormal{/pattern\vimkey{CR}} (start search) $\rightarrow$ \vimnormal{/\vimkey{CR}} (continue search)\\
-    (\vimcommand{:[range]/pattern} - to use within range)
+    \vimcommand{:[range]/pattern} - to use within range
     \begin{itemize}
         \item regex rules:
         \begin{itemize}
@@ -478,8 +487,10 @@
     Common syntax (allows custom separators e.g. \vimcommand{/}, \vimcommand{\#}, \vimcommand{\$}, \vimcommand{,}):
     {\footnotesize 
     \begin{itemize}
-        \item \vimcommand{:\%s/pattern/replace/commands}
-        \item \vimcommand{:\%s,pattern,replace,commands}
+        \item \vimcommand{:[range]s/pattern/replace/flags}
+        \item \vimcommand{:s/pattern/replace/flags} - within line
+        \item \vimcommand{:\%s/pattern/replace/flags}
+        \item \vimcommand{:\%s,pattern,replace,flags}
     \end{itemize}
     }
     Where
@@ -487,9 +498,12 @@
         \item pattern supports regex (only grouping needs escaping):\\
           \vimcommand{\textbackslash{(}}, \vimcommand{\textbackslash{)}}, \vimcommand{.}, \vimcommand{*}, \vimcommand{?}, \vimcommand{+}, \vimcommand{[\string^X]}
         \item in replace use groups with \vimcommand{\textbackslash{1}}, \vimcommand{\textbackslash{2}}, \ldots or whole match \vimcommand{\&}
-        \item commands: \vimcommand{g} (global), \vimcommand{c} (confirm), \vimcommand{i} (ignore case)
+        \item flags: \vimcommand{g} (global), \vimcommand{c} (confirm), \vimcommand{i} (ignore case)
         \item call custom command on match \vimcommand{\textbackslash{=}call foo()}
-        \item use nested replace \vimcommand{\textbackslash{=}substitute()} with \vimcommand{submatch()}
+        \item use nested replace \vimcommand{\textbackslash{=}substitute()} with \vimcommand{submatch()}, e.g.:
+    {\footnotesize 
+          \vimcommand{:s/outer/\textbackslash{=}substitute(submatch(0), 'inner', 'replace', 'g')}
+    }
     \end{itemize}
 \end{frame}
 
