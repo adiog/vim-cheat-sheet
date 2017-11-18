@@ -115,7 +115,6 @@
 
 \begin{frame}
     \frametitle{Overview}
-    \viminsert{test}
     Vim is a highly customizable, modal editor. It is extensible with built-in vimscript language, python-support and huge collection of plugins.\\
     This presentation is intended to give a general overview of Vim and be a first reference for a novice user to start using its feature efficiently.\\
     For futher information please
@@ -139,23 +138,23 @@
 \end{frame}
 
 \begin{frame}[fragile]
-    \frametitle{Presentation convention}
+    \frametitle{Notation}
     To avoid confusion the following colors will be used to indicate the initial modes of key sequence:
     \begin{itemize}
-        \item \vimnormal{\vimmode{normal}} $\rightarrow$ \viminsert{\vimmode{insert}} - \vimnormal{i}, \vimnormal{I}, \vimnormal{a}, \vimnormal{A}, \vimnormal{o}, \vimnormal{O}, \vimnormal{C}, \vimnormal{S}
-        \item \vimvisual{\vimmode{visual}} $\rightarrow$ \viminsert{\vimmode{insert}} - \vimvisual{I}, \vimvisual{A}, \vimvisual{c}
-        \item \vimvisual{\vimmode{visual}} $\rightarrow$ \vimnormal{\vimmode{normal}} - \vimvisual{\vimkey{ESC}}
-        \item \viminsert{\vimmode{insert}} $\rightarrow$ \vimnormal{\vimmode{normal}} - \viminsert{\vimkey{ESC}}
-        \item \vimnormal{\vimmode{normal}} $\rightarrow$ \vimvisual{\vimmode{visual}} - \vimnormal{v}, \vimnormal{V}, \vimnormal{\vimkey{C-v}}
-        \item \vimnormal{\vimmode{normal}} $\rightarrow$ \vimcommand{command} - \vimnormal{:}
-        \item \vimvisual{\vimmode{visual}} $\rightarrow$ \vimcommand{command} - \vimnormal{:} (\vimcommand{:'\textless{},'\textgreater{}} indicates visual range) 
-        \item \vimcommand{command} $\rightarrow$ \vimnormal{\vimmode{normal}} - \vimcommand{\vimkey{ESC}}
+        \item \vimnormal{\vimmode{normal}} $\rightarrow$ \viminsert{\vimmode{insert}}: \vimnormal{i}, \vimnormal{I}, \vimnormal{a}, \vimnormal{A}, \vimnormal{o}, \vimnormal{O}, \vimnormal{C}, \vimnormal{S}
+        \item \vimvisual{\vimmode{visual}} $\rightarrow$ \viminsert{\vimmode{insert}}: \vimvisual{I}, \vimvisual{A}, \vimvisual{c}
+        \item \vimvisual{\vimmode{visual}} $\rightarrow$ \vimnormal{\vimmode{normal}}: \vimvisual{\vimkey{ESC}}
+        \item \viminsert{\vimmode{insert}} $\rightarrow$ \vimnormal{\vimmode{normal}}: \viminsert{\vimkey{ESC}}
+        \item \vimnormal{\vimmode{normal}} $\rightarrow$ \vimvisual{\vimmode{visual}}: \vimnormal{v}, \vimnormal{V}, \vimnormal{\vimkey{C-v}}
+        \item \vimnormal{\vimmode{normal}} $\rightarrow$ \vimcommand{command}: \vimnormal{:}
+        \item \vimvisual{\vimmode{visual}} $\rightarrow$ \vimcommand{command}: \vimnormal{:} (\vimcommand{:'\textless{},'\textgreater{}} indicates visual range) 
+        \item \vimcommand{command} $\rightarrow$ \vimnormal{\vimmode{normal}}: \vimcommand{\vimkey{ESC}}
     \end{itemize}
     By default command instructions will be marked regardless initial mode (i.e. with leading colon - e.g. \vimcommand{:h vim-modes}). Also trailing \texttt{Enter} (\vimcommand{\vimkey{CR}}) will be mostly omitted.
 \end{frame}
 
 \begin{frame}[fragile]
-    \frametitle{Used convention in examples}
+    \frametitle{Notation in examples}
     {\footnotesize
     \begin{itemize}
         \item \vimcommand{[range]} - stands for comma-separated range of lines, e.g. \vimcommand{15,25}, or visual range \vimcommand{:'\textless{},'\textgreater{}}, or whole file \vimcommand{\%}
@@ -683,10 +682,13 @@ syn match texMathSymbol '\\gamma\>' contained conceal cchar=γG
         \item http://vimcasts.org
         \item http://vimgolf.org
         \item http://vimregex.com
+        \item https://github.com/tpope
         \item http://learnvimscriptthehardway.stevelosh.com/
         \item https://github.com/vim/vim
         \item https://github.com/vim-scripts
         \item http://vim.org
+        \item https://neovim.io
+        \item https://github.com/neovim/neovim
     \end{itemize}
 \end{frame}
 
