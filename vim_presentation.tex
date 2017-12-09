@@ -199,8 +199,14 @@
         \item \vimnormal{gh} (left), \vimnormal{gj} (down), \vimnormal{gk} (up), \vimnormal{gl} (right) (when wrapped)\\
         \item \vimnormal{gg} (begin of file), \vimnormal{G} (end of file) \\
         \item \vimcommand{:[linenumber]} - go to line
+        \item \vimnormal{[percent]\%} - go to percent of file
     \end{enumerate}
-    All motion will be precisely described on further slides.
+    All motions will be precisely described on further slides.
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Sample movements}
+    \includegraphics[width=\textwidth]{vim_movements.png}
 \end{frame}
 
 \begin{frame}
@@ -208,12 +214,13 @@
     In \viminsert{insert} mode:
     \begin{enumerate}
         \item \viminsert{\vimkey{C-p}}, \viminsert{\vimkey{C-n}} - previous, next autocomplete suggestion
-        \item \viminsert{\vimkey{C-x}\vimkey{C-f}} - autocomplete with filename 
-        \item \viminsert{\vimkey{C-e}}, \viminsert{\vimkey{C-y}} - insert char below/above
+        \item \viminsert{\vimkey{C-x}\vimkey{C-f}} - autocomplete filename (based on cwd)
+        \item \viminsert{\vimkey{C-e}}, \viminsert{\vimkey{C-y}} - insert (copy) char from below/above line
     \end{enumerate}
     In \vimnormal{normal} mode:
     \begin{enumerate}
-        \item \vimnormal{\vimkey{C-a}}, \vimnormal{\vimkey{C-x}} - increment, decrement number 
+      \item \vimnormal{\vimkey{C-a}}, \vimnormal{\vimkey{C-x}} - increment, decrement number (also hex)\\
+        (for operating on dates see tpope/vim-speeddating)
     \end{enumerate}
 \end{frame}
 
@@ -270,7 +277,8 @@
         \item \vimcommand{:red[o]}    - redo one change which was undone
         \item \vimnormal{U}          - undo all latest changes on one line.
     \end{enumerate}
-    \vimnormal{.}          - repeat last change, with count replaced with [count].
+    \vimnormal{.} (a dot character) - repeat last change, with count replaced with [count].
+    (see sjl/gundo.vim plugin for boosted history navigation)
 \end{frame}
 
 \begin{frame}
@@ -445,7 +453,7 @@
 
 \begin{frame}
     \frametitle{Search}
-    \vimnormal{/pattern\vimkey{CR}} (start search) $\rightarrow$ \vimnormal{/\vimkey{CR}} (continue search)\\
+    \vimnormal{/pattern\vimkey{CR}} (start search) $\rightarrow$ \vimnormal{n} or \vimnormal{/\vimkey{CR}} - next, \vimnormal{N} - previous\\
     \vimcommand{:[range]/pattern} - to use within range
     \begin{itemize}
         \item regex rules:
@@ -499,11 +507,22 @@
           \vimcommand{\textbackslash{(}}, \vimcommand{\textbackslash{)}}, \vimcommand{.}, \vimcommand{*}, \vimcommand{?}, \vimcommand{+}, \vimcommand{[\string^X]}
         \item in replace use groups with \vimcommand{\textbackslash{1}}, \vimcommand{\textbackslash{2}}, \ldots or whole match \vimcommand{\&}
         \item flags: \vimcommand{g} (global), \vimcommand{c} (confirm), \vimcommand{i} (ignore case)
-        \item call custom command on match \vimcommand{\textbackslash{=}call foo()}
+        \item call custom command on match {\footnotesize \vimcommand{\textbackslash{=}call eval\_replacement()}}
         \item use nested replace \vimcommand{\textbackslash{=}substitute()} with \vimcommand{submatch()}, e.g.:
     {\footnotesize 
           \vimcommand{:s/outer/\textbackslash{=}substitute(submatch(0), 'inner', 'replace', 'g')}
     }
+        \item use nested replace with \vimcommand{:g}, e.g.: \vimcommand{:g/good/s/bad/ugly/g}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Shell invocation}
+    \begin{itemize}
+      \item \vimcommand{:read !ls -la} or \vimcommand{:read !date}
+      \item \vimcommand{:\%!sort}\
+      \item \vimcommand{:let curdate=system('date')}
+      \item backticks \vimcommand{:new `date`}
     \end{itemize}
 \end{frame}
 
@@ -630,7 +649,7 @@ syn match texMathSymbol '\\gamma\>' contained conceal cchar=γG
     This can be used as a in place calculator, e.g. on line:\\
     \textrm{6 * 7 =}\\
     the following sequence may be used to append a result:\\
-    \vimnormal{0yt=A\textless{}C-r\textgreater{}=\textless{}C-r\textgreater>a\textless{}CR\textgreater}
+    \vimnormal{0vt="ayA\textless{}C-r\textgreater{}=\textless{}C-r\textgreater a\textless{}CR\textgreater}
 \end{frame}
 
 \begin{frame}
